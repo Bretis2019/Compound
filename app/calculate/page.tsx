@@ -54,21 +54,17 @@ function calculateInflationBalance(inflationRate: number, startDate: string, end
     const start = new Date(startDate);
     const end = new Date(endDate);
 
+    const inflationFactor = Math.pow(1+(inflationRate / 100),1/12)
+
 
     // Calculate the number of months between start and end dates
     const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
 
-    // Convert yearly inflation rate to monthly
-    const monthlyInflationRate = 1 - (inflationRate / 1200);
-
     let currentBalance = startingBalance;
 
     for (let i = 0; i < months; i++) {
-        // Adjust for inflation
-        currentBalance *= monthlyInflationRate;
-
-        // Add monthly contribution
         currentBalance += monthlyContribution;
+        currentBalance /= inflationFactor;
     }
 
     return formatNumberWithCommas(currentBalance);

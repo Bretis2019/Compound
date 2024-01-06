@@ -1,6 +1,6 @@
 import {inflationTable} from "@/app/calculate/inflationTable";
 import yahooFinance from 'yahoo-finance2';
-import {StockBarChart} from "@/app/calculate/StockBarChart";
+import {ChartsTabs} from "@/app/calculate/ChartsTabs";
 
 interface StockData {
     date: Date;
@@ -156,7 +156,7 @@ export default async function Home(){
                     <div>with investing balance: {investingEndBalance}</div>
                 </div>
             </div>
-            <StockBarChart data={chartData}/>
+            <ChartsTabs data={chartData}/>
         </div>
     )
 }

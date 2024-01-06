@@ -29,14 +29,12 @@ export function StockBarChart(props: any) {
                     dataKey="deposits"
                     fill="#FF0000"
                     stackId="a"
-                    className="fill-destructive"
                 />
                 <Bar
                     dataKey="compound"
                     fill="#F5F5F5"
                     stackId="a"
                     radius={[4, 4, 0, 0]}
-                    className="fill-secondary"
                 />
             </BarChart>
         </ResponsiveContainer>

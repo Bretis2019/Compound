@@ -1,5 +1,4 @@
 import {inflationTable} from "@/app/calculate/inflationTable";
-import yahooFinance from 'yahoo-finance2';
 import {ChartsTabs} from "@/app/calculate/ChartsTabs";
 
 interface StockData {
@@ -124,13 +123,27 @@ function calculateEndBalance(startDate: string, endDate: string, startingBalance
     return formatNumberWithCommas(endBalance);
 }
 
+async function fetchData(stock: string, startDate: string, endDate: string) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/stockData?stock=${stock}&startDate=${startDate}&endDate=${endDate}`);
+        return await response.json();
+    } catch (error) {
+        console.log('error', error);
+        return null;
+    }
+}
+
 export default async function Home(){
     const country = "Algeria";
     const inflation = getInflation(country);
     const stock = "GOOG";
     const startDate = "2023-01-01";
     const endDate = todayDate();
-    const stockData = await yahooFinance.historical(stock, {period1: startDate, period2: endDate, interval: "1mo"});
+    const response = await fetchData(stock, startDate, endDate);
+    const stockData = response.map((item: StockData)=> ({
+        ...item,
+        date: new Date(item.date)
+    }));
     const startingBalance = 0;
     const monthlyContribution = 50000;
 

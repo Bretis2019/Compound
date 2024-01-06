@@ -1,5 +1,8 @@
+"use client"
 import {inflationTable} from "@/app/calculate/inflationTable";
 import {ChartsTabs} from "@/app/calculate/ChartsTabs";
+import {useSearchParams} from "next/navigation";
+import {useEffect, useState} from "react";
 
 interface StockData {
     date: Date;
@@ -125,48 +128,68 @@ function calculateEndBalance(startDate: string, endDate: string, startingBalance
 
 async function fetchData(stock: string, startDate: string, endDate: string) {
     try {
-        const response = await fetch(`http://localhost:3000/api/stockData?stock=${stock}&startDate=${startDate}&endDate=${endDate}`);
-        return await response.json();
+        const response = await fetch(`api/stockData?stock=${stock}&startDate=${startDate}&endDate=${endDate}`);
+        const data = await response.json();
+        return data.map((item: StockData) => ({
+            ...item,
+            date: new Date(item.date)
+        }));
     } catch (error) {
         console.log('error', error);
         return null;
     }
 }
 
-export default async function Home(){
-    const country = "Algeria";
-    const inflation = getInflation(country);
-    const stock = "GOOG";
-    const startDate = "2023-01-01";
+export default function Home(){
+
+    const searchParams = useSearchParams()
+
+    const country = searchParams.get("country") || "Algeria";
+    const stock = searchParams.get("stock") || "spy";
+    const startDate = searchParams.get("startDate") || "2021-01-01";
+    const startingBalance = Number(searchParams.get("startingBalance")) || 0;
+    const monthlyContribution = Number(searchParams.get("monthlyContribution")) || 0;
     const endDate = todayDate();
-    const response = await fetchData(stock, startDate, endDate);
-    const stockData = response.map((item: StockData)=> ({
-        ...item,
-        date: new Date(item.date)
-    }));
-    const startingBalance = 0;
-    const monthlyContribution = 50000;
-
-    const endBalance = calculateEndBalance(startDate, endDate, startingBalance, monthlyContribution)
+    const inflation = getInflation(country);
 
 
-    const inflationEndBalance: string = calculateInflationBalance(inflation, startDate, endDate, startingBalance, monthlyContribution);
+    const [endBalance, setEndBalance] = useState('');
+    const [inflationEndBalance, setInflationEndBalance] = useState('');
+    const [investingEndBalance, setInvestingEndBalance] = useState('');
+    const [chartData, setChartData] = useState<InvestmentResult[]>([]);
 
-    const investingData = calculateInvestingEndBalance(startingBalance, monthlyContribution, stockData);
+    useEffect(() => {
+        // Fetch data and calculate values in the useEffect hook
+        const fetchDataAndCalculate = async () => {
+            try {
+                const stockDataResult = await fetchData(stock, startDate, endDate);
 
-    const investingEndBalance = investingData[0];
+                const endBalanceResult = calculateEndBalance(startDate, endDate, startingBalance, monthlyContribution);
+                setEndBalance(endBalanceResult);
 
+                const inflationEndBalanceResult = calculateInflationBalance(inflation, startDate, endDate, startingBalance, monthlyContribution);
+                setInflationEndBalance(inflationEndBalanceResult);
 
-    const chartData = investingData[1]
+                const investingDataResult = calculateInvestingEndBalance(startingBalance, monthlyContribution, stockDataResult);
+                setInvestingEndBalance(investingDataResult[0]);
+                setChartData(investingDataResult[1]);
+            } catch (error) {
+                console.error('Error fetching or calculating data:', error);
+            }
+        };
+
+        // Call the fetchDataAndCalculate function
+        fetchDataAndCalculate();
+    }, [stock, startDate, endDate, startingBalance, monthlyContribution, inflation]);
 
     return (
         <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
             <div className={"w-full flex justify-between"}>
                 <div className={"font-extrabold text-6xl"}>{stock}</div>
                 <div>
-                    <div>Deposits: {endBalance}</div>
-                    <div>Without investing balance: {inflationEndBalance}</div>
-                    <div>with investing balance: {investingEndBalance}</div>
+                    <div>Deposits: ${endBalance}</div>
+                    <div>Without investing balance: ${inflationEndBalance}</div>
+                    <div>with investing balance: ${investingEndBalance}</div>
                 </div>
             </div>
             <ChartsTabs data={chartData}/>

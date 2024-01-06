@@ -59,13 +59,13 @@ function calculateInflationBalance(inflationRate: number, startDate: string, end
     const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
 
     // Convert yearly inflation rate to monthly
-    const monthlyInflationRate = inflationRate / 12;
+    const monthlyInflationRate = 1 - (inflationRate / 1200);
 
     let currentBalance = startingBalance;
 
     for (let i = 0; i < months; i++) {
         // Adjust for inflation
-        currentBalance *= 1 - (monthlyInflationRate / 100);
+        currentBalance *= monthlyInflationRate;
 
         // Add monthly contribution
         currentBalance += monthlyContribution;

@@ -185,17 +185,17 @@ export default function Home(){
     return (
         <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
             <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
-                <div className={"flex items-center w-full gap-x-2 justify-between"}>
+                <div className={"flex md:flex-col items-center md:w-fit w-full gap-x-2 justify-between"}>
                     <div className={"font-extrabold text-6xl"}>{stock}</div>
                     <div>
                         <div>{startDate}</div>
                         <div>{endDate}</div>
                     </div>
                 </div>
-                <div>
-                    <div>Deposits: ${endBalance}</div>
-                    <div>Without investing balance: ${inflationEndBalance}</div>
-                    <div>with investing balance: ${investingEndBalance}</div>
+                <div className={"flex flex-col gap-y-4"}>
+                    <div>Deposits: <span className={"font-semibold"}>${endBalance}</span></div>
+                    <div>Without investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
+                    <div>with investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
                 </div>
             </div>
             <ChartsTabs data={chartData}/>

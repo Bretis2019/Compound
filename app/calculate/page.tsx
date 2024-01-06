@@ -17,12 +17,17 @@ interface InvestmentResult {
     date: string; // month name abbreviated
     deposits: number; // starting balance plus current total of monthly deposits
     compound: number; // current balance
+    diff: number; //difference between deposit and investment for barchart
 }
 
 
 const formatNumberWithCommas = (number: number) => {
     return number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 };
+
+function isLong(inputString: string): boolean {
+    return inputString.length > 4;
+}
 
 function getMonthAbbreviation(date: Date): string {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -103,8 +108,9 @@ function calculateInvestingEndBalance(
 
         const deposits = totalDeposits;
         const compound = currentBalance;
+        const diff = currentBalance - totalDeposits;
 
-        resultArray.push({ date, deposits, compound });
+        resultArray.push({ date, deposits, compound, diff });
     }
 
     return [formatNumberWithCommas(currentBalance), resultArray];
@@ -186,7 +192,7 @@ export default function Home(){
         <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
             <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
                 <div className={"flex md:flex-col items-center md:w-fit w-full gap-x-2 justify-between"}>
-                    <div className={"font-extrabold text-6xl"}>{stock}</div>
+                    <div className={`font-extrabold ${isLong(stock) ? "text-4xl": "text-6xl"} md:text-6xl`}>{stock}</div>
                     <div>
                         <div>{startDate}</div>
                         <div>{endDate}</div>

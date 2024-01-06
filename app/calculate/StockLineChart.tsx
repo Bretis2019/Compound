@@ -1,14 +1,22 @@
 "use client"
 
-import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis} from "recharts"
+import {
+    CartesianGrid,
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    XAxis,
+    YAxis
+} from "recharts"
 
-export function StockBarChart(props: any) {
+export function StockLineChart(props: any) {
 
     const { data } = props;
 
     return (
         <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={data}>
+            <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <Legend />
                 <XAxis
@@ -25,20 +33,15 @@ export function StockBarChart(props: any) {
                     axisLine={false}
                     tickFormatter={(value) => `$${value}`}
                 />
-                <Bar
+                <Line
                     dataKey="deposits"
-                    fill="#FF0000"
-                    stackId="a"
-                    className="fill-destructive"
+                    stroke="#FF0000"
                 />
-                <Bar
+                <Line
                     dataKey="compound"
-                    fill="#F5F5F5"
-                    stackId="a"
-                    radius={[4, 4, 0, 0]}
-                    className="fill-secondary"
+                    stroke="#F5F5F5"
                 />
-            </BarChart>
+            </LineChart>
         </ResponsiveContainer>
     )
 }

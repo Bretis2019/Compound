@@ -36,10 +36,12 @@ export function StockLineChart(props: any) {
                 <Line
                     dataKey="deposits"
                     stroke="#FF0000"
+dot={false}
                 />
                 <Line
                     dataKey="compound"
                     stroke="#F5F5F5"
+dot={false}
                 />
             </LineChart>
         </ResponsiveContainer>

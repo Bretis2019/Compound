@@ -14,6 +14,11 @@ import {cn} from "@/lib/utils";
 import {CalendarIcon} from "@radix-ui/react-icons";
 import {addDays, format} from "date-fns";
 
+interface Suggestion {
+  long: string,
+  ticker: string
+}
+
 
 function formatDate(inputDateString: string) {
   // Create a Date object from the input date string
@@ -69,7 +74,7 @@ export function LandingForm() {
   };
   function onSubmit() {
     console.log(values);
-    //router.push(`/calculate?country=${values.country}&stock=${values.stock}&startDate=${values.startDate}&startingBalance=${values.initialBalance}&monthlyContribution=${values.monthlyContribution}`)
+    router.push(`/calculate?country=${values.country}&stock=${values.stock}&startDate=${values.startDate}&startingBalance=${values.initialBalance}&monthlyContribution=${values.monthlyContribution}`)
   }
 
   useEffect(() => {
@@ -103,7 +108,7 @@ export function LandingForm() {
 
 
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
   function handleStockChnage(event: any){
     function update(){
@@ -113,11 +118,13 @@ export function LandingForm() {
   }
 
   useEffect(() => {
-    fetch(`/api/search/?q=${query}`)
-        .then((response) => response.json())
-        .then(data => {
-          setSuggestions(data.suggestions);
-        })
+    if(query !== ""){
+      fetch(`/api/search/?q=${query}`)
+          .then((response) => response.json())
+          .then(data => {
+            setSuggestions(data.suggestions);
+          })
+    }
   }, [query]);
 
   return (
@@ -143,13 +150,31 @@ export function LandingForm() {
                     <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search country..." />
                     <CommandEmpty>No stock found.</CommandEmpty>
                     <CommandGroup>
-                      {commandItems}
+                      {suggestions && suggestions.map(suggestion => {
+                        return (
+                            <CommandItem key={suggestion.ticker} value={suggestion.ticker} onSelect={() => {
+                              setValues(prevValues => ({
+                                ...prevValues,
+                                stock: suggestion.ticker
+                              }));
+                              setStockOpen(false)
+                            }}>
+                              {suggestion.ticker}
+                            </CommandItem>
+                        )
+                      })}
                     </CommandGroup>
                   </Command>
                 </PopoverContent>
               </Popover>
               <SelectContent>
-                {selectItems}
+                {suggestions && suggestions.map(suggestion => {
+                  return (
+                      <SelectItem key={suggestion.ticker} value={suggestion.ticker}>
+                        {suggestion.ticker}
+                      </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -254,35 +279,6 @@ function ChevronsUpDownIcon(props: any) {
     >
       <path d="m7 15 5 5 5-5" />
       <path d="m7 9 5-5 5 5" />
-    </svg>
-  )
-}
-
-
-function CalendarDaysIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-      <line x1="16" x2="16" y1="2" y2="6" />
-      <line x1="8" x2="8" y1="2" y2="6" />
-      <line x1="3" x2="21" y1="10" y2="10" />
-      <path d="M8 14h.01" />
-      <path d="M12 14h.01" />
-      <path d="M16 14h.01" />
-      <path d="M8 18h.01" />
-      <path d="M12 18h.01" />
-      <path d="M16 18h.01" />
     </svg>
   )
 }

@@ -3,6 +3,7 @@ import {inflationTable} from "@/app/calculate/inflationTable";
 import {ChartsTabs} from "@/app/calculate/ChartsTabs";
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
+import Information from "@/app/calculate/Information";
 
 interface StockData {
     date: Date;
@@ -17,12 +18,20 @@ interface InvestmentResult {
     date: string; // month name abbreviated
     deposits: number; // starting balance plus current total of monthly deposits
     compound: number; // current balance
-    diff: number; //difference between deposit and investment for barchart
+    invested: number; //difference between deposit and investment for barchart
 }
 
 
 const formatNumberWithCommas = (number: number) => {
     return number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+};
+
+const undoFormatNumberWithCommas = (formattedNumber: string): number => {
+    // Remove commas from the formatted number
+    const numberWithoutCommas = formattedNumber.replace(/,/g, '');
+
+    // Parse the string back to a number
+    return parseFloat(numberWithoutCommas);
 };
 
 function isLong(inputString: string): boolean {
@@ -58,17 +67,13 @@ function calculateInflationBalance(inflationRate: number, startDate: string, end
     // Calculate the number of months between start and end dates
     const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
 
-    // Convert yearly inflation rate to monthly
-    const monthlyInflationRate = (1 + inflationRate) ** (1 / 12) - 1;
+    const inflationFactor = Math.pow(1+(inflationRate / 100),1/12);
 
     let currentBalance = startingBalance;
 
     for (let i = 0; i < months; i++) {
-        // Adjust for inflation
-        currentBalance *= 1 - (monthlyInflationRate / 100);
-
-        // Add monthly contribution
         currentBalance += monthlyContribution;
+        currentBalance /= inflationFactor;
     }
 
     return formatNumberWithCommas(currentBalance);
@@ -108,9 +113,9 @@ function calculateInvestingEndBalance(
 
         const deposits = totalDeposits;
         const compound = currentBalance;
-        const diff = currentBalance - totalDeposits;
+        const invested = currentBalance - totalDeposits;
 
-        resultArray.push({ date, deposits, compound, diff });
+        resultArray.push({ date, deposits, compound, invested });
     }
 
     return [formatNumberWithCommas(currentBalance), resultArray];
@@ -162,6 +167,7 @@ export default function Home(){
     const [endBalance, setEndBalance] = useState('');
     const [inflationEndBalance, setInflationEndBalance] = useState('');
     const [investingEndBalance, setInvestingEndBalance] = useState('');
+    const [fire, setFire] = useState('');
     const [chartData, setChartData] = useState<InvestmentResult[]>([]);
 
     useEffect(() => {
@@ -185,8 +191,18 @@ export default function Home(){
         };
 
         // Call the fetchDataAndCalculate function
-        fetchDataAndCalculate();
+        fetchDataAndCalculate()
     }, [stock, startDate, endDate, startingBalance, monthlyContribution, inflation]);
+
+
+    useEffect(() => {
+        if(investingEndBalance !== '' && inflationEndBalance !== '' && endBalance !== ''){
+            console.log(investingEndBalance, inflationEndBalance, endBalance)
+            const fireResult = (undoFormatNumberWithCommas(investingEndBalance) / 300) * (undoFormatNumberWithCommas(inflationEndBalance) / undoFormatNumberWithCommas(endBalance));
+            setFire(formatNumberWithCommas(fireResult));
+        }
+    },[investingEndBalance, inflationEndBalance, endBalance])
+
 
     return (
         <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
@@ -199,9 +215,10 @@ export default function Home(){
                     </div>
                 </div>
                 <div className={"flex flex-col gap-y-4"}>
-                    <div>Deposits: <span className={"font-semibold"}>${endBalance}</span></div>
-                    <div>Without investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
-                    <div>with investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
+                    <div><Information content={"Initial Balance plus monthly contributions"}/>  Deposits: <span className={"font-semibold"}>${endBalance}</span></div>
+                    <div><Information content={`Final balance adjusted to inflation which was %${inflation} yearly`}/> Without investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
+                    <div><Information content={`Final balance if dollar cost averagign into ${stock}`}/> With investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
+                    <div><Information content={"Retirement monthly balance adjusted for inflation using the FIRE method"}/>  FIRE monthly adjusted: <span className={"font-semibold"}>${fire}</span></div>
                 </div>
             </div>
             <ChartsTabs data={chartData}/>

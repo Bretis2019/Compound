@@ -31,7 +31,7 @@ export function StockBarChart(props: any) {
                     stackId="a"
                 />
                 <Bar
-                    dataKey="diff"
+                    dataKey="invested"
                     fill="#F5F5F5"
                     stackId="a"
                     radius={[4, 4, 0, 0]}

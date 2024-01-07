@@ -4,6 +4,7 @@ import {ChartsTabs} from "@/app/calculate/ChartsTabs";
 import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import Information from "@/app/calculate/Information";
+import Link from "next/link";
 
 interface StockData {
     date: Date;
@@ -206,22 +207,39 @@ export default function Home(){
 
     return (
         <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
-            <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
-                <div className={"flex md:flex-col items-center md:w-fit w-full gap-x-2 justify-between"}>
-                    <div className={`font-extrabold ${isLong(stock) ? "text-4xl": "text-6xl"} md:text-6xl`}>{stock}</div>
-                    <div>
-                        <div>{startDate}</div>
-                        <div>{endDate}</div>
+            <div>
+                <Link href={"/"}><ArrowSVG/></Link>
+                <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
+                    <div className={"flex md:flex-col items-center md:w-fit w-full gap-x-2 justify-between"}>
+                        <div
+                            className={`font-extrabold ${isLong(stock) ? "text-4xl" : "text-6xl"} md:text-6xl`}>{stock}</div>
+                        <div>
+                            <div>{startDate}</div>
+                            <div>{endDate}</div>
+                        </div>
                     </div>
-                </div>
-                <div className={"flex flex-col gap-y-4"}>
-                    <div><Information content={"Initial Balance plus monthly contributions"}/>  Deposits: <span className={"font-semibold"}>${endBalance}</span></div>
-                    <div><Information content={`Final balance adjusted to inflation which was %${inflation} yearly`}/> Without investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
-                    <div><Information content={`Final balance if dollar cost averagign into ${stock}`}/> With investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
-                    <div><Information content={"Retirement monthly balance adjusted for inflation using the FIRE method"}/>  FIRE monthly adjusted: <span className={"font-semibold"}>${fire}</span></div>
+                    <div className={"flex flex-col gap-y-4"}>
+                        <div><Information content={"Initial Balance plus monthly contributions"}/> Deposits: <span
+                            className={"font-semibold"}>${endBalance}</span></div>
+                        <div><Information
+                            content={`Final balance adjusted to inflation which was %${inflation} yearly`}/> Without
+                            investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
+                        <div><Information content={`Final balance if dollar cost averagign into ${stock}`}/> With
+                            investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
+                        <div><Information
+                            content={"Retirement monthly balance adjusted for inflation using the FIRE method"}/> FIRE
+                            monthly adjusted: <span className={"font-semibold"}>${fire}</span></div>
+                    </div>
                 </div>
             </div>
             <ChartsTabs data={chartData}/>
         </div>
-    )
+    );
+}
+
+
+function ArrowSVG(){
+    return (
+        <svg className={"w-[35px] h-[35px]"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(270)" stroke="#ffffff"><g id="SVGRepo_bgCarrier" strokeWidth={0} /><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" /><g id="SVGRepo_iconCarrier"> <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#ffffff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" /> </g></svg>
+    );
 }

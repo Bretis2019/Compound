@@ -128,24 +128,24 @@ export function LandingForm() {
   }, [query]);
 
   return (
-    <div key="1" className="w-full max-w-lg mx-auto">
+    <div key="1" className="w-full h-screen max-w-lg mx-auto flex justify-center items-center">
       <Card>
         <CardHeader>
-          <CardTitle>Financial Planning</CardTitle>
-          <CardDescription>Set your financial goals and plan accordingly.</CardDescription>
+          <CardTitle className={"text-2xl"}>Dollar cost average simulator</CardTitle>
+          <CardDescription>Simulate putting your savings in a stock over a period of time.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
+          <div className="w-full flex items-center justify-between space-x-8 space-y-2">
             <Label htmlFor="country">Stock</Label>
             <Select>
               <Popover open={stockOpen} onOpenChange={setStockOpen}>
                 <PopoverTrigger asChild>
-                  <Button className="w-[200px] justify-between" role="combobox" variant="outline">
+                  <Button className="w-[240px] justify-between" role="combobox" variant="outline">
                     {values.stock === "" ? "Select a stock...": values.stock}
                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent className="w-[240px] p-0">
                   <Command>
                     <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search country..." />
                     <CommandEmpty>No stock found.</CommandEmpty>
@@ -178,17 +178,17 @@ export function LandingForm() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
+          <div className="w-full flex items-center justify-between space-x-8 space-y-2">
             <Label htmlFor="country">Country</Label>
             <Select>
               <Popover open={countryOpen} onOpenChange={setCountryOpen}>
                 <PopoverTrigger asChild>
-                  <Button className="w-[200px] justify-between" role="combobox" variant="outline">
+                  <Button className="w-[240px] justify-between" role="combobox" variant="outline">
                     {values.country === "" ? "Select country...": values.country}
                     <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent className="w-[240px] p-0">
                   <Command>
                     <CommandInput className="h-9" placeholder="Search country..." />
                     <CommandEmpty>No country found.</CommandEmpty>
@@ -203,7 +203,7 @@ export function LandingForm() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
+          <div className="w-full flex items-center justify-between space-x-8 space-y-2">
             <Label htmlFor="goal-date">Start Date</Label>
             <Popover open={dateOpen} onOpenChange={setDateOpen}>
               <PopoverTrigger asChild>
@@ -255,7 +255,7 @@ export function LandingForm() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={onSubmit} type={"submit"} className="ml-auto">Submit</Button>
+          <Button onClick={onSubmit} type={"submit"} className="ml-auto rounded-full">Submit</Button>
         </CardFooter>
       </Card>
     </div>

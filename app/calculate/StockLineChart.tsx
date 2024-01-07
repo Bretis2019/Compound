@@ -15,7 +15,7 @@ export function StockLineChart(props: any) {
     const { data } = props;
 
     return (
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="95%" height={350}>
             <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <Legend />

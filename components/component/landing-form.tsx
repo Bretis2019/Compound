@@ -136,7 +136,7 @@ export function LandingForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="w-full flex items-center justify-between space-x-8 space-y-2">
-            <Label htmlFor="country">Stock</Label>
+            <Label htmlFor="stock">Stock</Label>
             <Select>
               <Popover open={stockOpen} onOpenChange={setStockOpen}>
                 <PopoverTrigger asChild>
@@ -147,7 +147,7 @@ export function LandingForm() {
                 </PopoverTrigger>
                 <PopoverContent className="w-[240px] p-0">
                   <Command>
-                    <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search country..." />
+                    <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search stocks..." />
                     <CommandEmpty>No stock found.</CommandEmpty>
                     <CommandGroup>
                       {suggestions && suggestions.map(suggestion => {

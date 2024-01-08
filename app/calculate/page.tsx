@@ -5,6 +5,7 @@ import {useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import Information from "@/app/calculate/Information";
 import Link from "next/link";
+import Loading from "@/app/calculate/loading";
 
 interface StockData {
     date: Date;
@@ -138,19 +139,7 @@ function calculateEndBalance(startDate: string, endDate: string, startingBalance
     return formatNumberWithCommas(endBalance);
 }
 
-async function fetchData(stock: string, startDate: string, endDate: string) {
-    try {
-        const response = await fetch(`api/stockData?stock=${stock}&startDate=${startDate}&endDate=${endDate}`);
-        const data = await response.json();
-        return data.map((item: StockData) => ({
-            ...item,
-            date: new Date(item.date)
-        }));
-    } catch (error) {
-        console.log('error', error);
-        return null;
-    }
-}
+
 
 export default function Home(){
 
@@ -164,6 +153,23 @@ export default function Home(){
     const endDate = todayDate();
     const inflation = getInflation(country);
 
+    const [loading, setLoading] = useState(false);
+
+    async function fetchData(stock: string, startDate: string, endDate: string) {
+        try {
+            setLoading(true);
+            const response = await fetch(`api/stockData?stock=${stock}&startDate=${startDate}&endDate=${endDate}`);
+            const data = await response.json();
+            setLoading(false);
+            return data.map((item: StockData) => ({
+                ...item,
+                date: new Date(item.date)
+            }));
+        } catch (error) {
+            console.log('error', error);
+            return null;
+        }
+    }
 
     const [endBalance, setEndBalance] = useState('');
     const [inflationEndBalance, setInflationEndBalance] = useState('');
@@ -206,34 +212,38 @@ export default function Home(){
 
 
     return (
-        <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
-            <div>
-                <Link href={"/"}><ArrowSVG/></Link>
-                <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
-                    <div className={"flex md:flex-col items-center md:w-fit w-full gap-x-2 justify-between"}>
-                        <div
-                            className={`font-extrabold ${isLong(stock) ? "text-4xl" : "text-6xl"} md:text-6xl`}>{stock}</div>
-                        <div>
-                            <div>{startDate}</div>
-                            <div>{endDate}</div>
+        <>
+            {loading ? <Loading /> :
+                <div className={"bg-black w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
+                    <div>
+                        <Link href={"/"}><ArrowSVG/></Link>
+                        <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
+                            <div className={"flex md:flex-col items-center md:w-fit w-full gap-x-2 justify-between"}>
+                                <div
+                                    className={`font-extrabold ${isLong(stock) ? "text-4xl" : "text-6xl"} md:text-6xl`}>{stock}</div>
+                                <div>
+                                    <div>{startDate}</div>
+                                    <div>{endDate}</div>
+                                </div>
+                            </div>
+                            <div className={"flex flex-col gap-y-4"}>
+                                <div><Information content={"Initial Balance plus monthly contributions"}/> Deposits: <span
+                                    className={"font-semibold"}>${endBalance}</span></div>
+                                <div><Information
+                                    content={`Final balance adjusted to inflation which was %${inflation} yearly`}/> Without
+                                    investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
+                                <div><Information content={`Final balance if dollar cost averagign into ${stock}`}/> With
+                                    investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
+                                <div><Information
+                                    content={"Retirement monthly balance adjusted for inflation using the FIRE method"}/> FIRE
+                                    monthly adjusted: <span className={"font-semibold"}>${fire}</span></div>
+                            </div>
                         </div>
                     </div>
-                    <div className={"flex flex-col gap-y-4"}>
-                        <div><Information content={"Initial Balance plus monthly contributions"}/> Deposits: <span
-                            className={"font-semibold"}>${endBalance}</span></div>
-                        <div><Information
-                            content={`Final balance adjusted to inflation which was %${inflation} yearly`}/> Without
-                            investing: <span className={"font-semibold"}>${inflationEndBalance}</span></div>
-                        <div><Information content={`Final balance if dollar cost averagign into ${stock}`}/> With
-                            investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
-                        <div><Information
-                            content={"Retirement monthly balance adjusted for inflation using the FIRE method"}/> FIRE
-                            monthly adjusted: <span className={"font-semibold"}>${fire}</span></div>
-                    </div>
+                    <ChartsTabs data={chartData}/>
                 </div>
-            </div>
-            <ChartsTabs data={chartData}/>
-        </div>
+            }
+        </>
     );
 }
 

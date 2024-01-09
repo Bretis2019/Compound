@@ -156,14 +156,14 @@ export function LandingForm() {
                     <CommandGroup>
                       {suggestions && suggestions.map(suggestion => {
                         return (
-                            <CommandItem key={suggestion.ticker} value={suggestion.ticker} onSelect={() => {
+                            <CommandItem key={suggestion.ticker} value={suggestion.long} onSelect={() => {
                               setValues(prevValues => ({
                                 ...prevValues,
                                 stock: suggestion.ticker
                               }));
                               setStockOpen(false)
                             }}>
-                              {suggestion.ticker}
+                              {suggestion.long}
                             </CommandItem>
                         )
                       })}
@@ -175,7 +175,7 @@ export function LandingForm() {
                 {suggestions && suggestions.map(suggestion => {
                   return (
                       <SelectItem key={suggestion.ticker} value={suggestion.ticker}>
-                        {suggestion.ticker}
+                        {suggestion.long}
                       </SelectItem>
                   )
                 })}

@@ -114,15 +114,19 @@ export function LandingForm() {
     function update(){
       setQuery(event.target.value);
     }
-    setTimeout(update, 1000);
+    setTimeout(update, 800);
   }
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if(query !== ""){
+      setLoading(true)
       fetch(`/api/search/?q=${query}`)
           .then((response) => response.json())
           .then(data => {
             setSuggestions(data.suggestions);
+            setLoading(false);
           })
     }
   }, [query]);
@@ -148,7 +152,7 @@ export function LandingForm() {
                 <PopoverContent className="w-[240px] p-0">
                   <Command>
                     <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search stocks..." />
-                    <CommandEmpty>No stock found.</CommandEmpty>
+                    <CommandEmpty>{loading ? "Loading...": "No stock found."}</CommandEmpty>
                     <CommandGroup>
                       {suggestions && suggestions.map(suggestion => {
                         return (
@@ -247,11 +251,11 @@ export function LandingForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="initial-balance">Initial Balance</Label>
-            <Input onChange={handleInitialBalanceChange} value={values.initialBalance} id="initial-balance" placeholder="Enter your initial balance" type="number" />
+            <Input onChange={handleInitialBalanceChange} value={values.initialBalance !== 0 ? values.initialBalance : undefined} id="initial-balance" placeholder="Enter your initial balance" type="number" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="monthly-contributions">Monthly Contributions</Label>
-            <Input onChange={handleMonthlyContributionChange} value={values.monthlyContribution} id="monthly-contributions" placeholder="Enter your monthly contributions" type="number" />
+            <Input onChange={handleMonthlyContributionChange} value={values.monthlyContribution !== 0 ? values.monthlyContribution: undefined} id="monthly-contributions" placeholder="Enter your monthly contributions" type="number" />
           </div>
         </CardContent>
         <CardFooter>

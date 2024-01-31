@@ -204,8 +204,7 @@ export default function Home(){
 
     useEffect(() => {
         if(investingEndBalance !== '' && inflationEndBalance !== '' && endBalance !== ''){
-            console.log(investingEndBalance, inflationEndBalance, endBalance)
-            const fireResult = (undoFormatNumberWithCommas(investingEndBalance) / 300) * (undoFormatNumberWithCommas(inflationEndBalance) / undoFormatNumberWithCommas(endBalance));
+            const fireResult = (undoFormatNumberWithCommas(investingEndBalance) / 300);
             setFire(formatNumberWithCommas(fireResult));
         }
     },[investingEndBalance, inflationEndBalance, endBalance])
@@ -236,7 +235,7 @@ export default function Home(){
                                     investing: <span className={"font-semibold"}>${investingEndBalance}</span></div>
                                 <div><Information
                                     content={"Retirement monthly balance adjusted for inflation using the FIRE method"}/> FIRE
-                                    monthly adjusted: <span className={"font-semibold"}>${fire}</span></div>
+                                    monthly balance: <span className={"font-semibold"}>${fire}</span></div>
                             </div>
                         </div>
                     </div>

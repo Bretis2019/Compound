@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import Information from "@/app/calculate/Information";
 import Link from "next/link";
 import Loading from "@/app/calculate/loading";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 
 interface StockData {
     date: Date;
@@ -213,7 +214,7 @@ export default function Home(){
     return (
         <>
             {loading ? <Loading /> :
-                <div className={"w-screen h-screen px-4 py-2 text-white flex flex-col justify-between"}>
+                <div className={"w-screen h-screen px-4 py-2 text-white flex flex-col justify-between absolute z-50"}>
                     <div>
                         <Link href={"/"}><ArrowSVG/></Link>
                         <div className={"w-full flex md:flex-row flex-col gap-y-8 md:justify-between"}>
@@ -242,7 +243,7 @@ export default function Home(){
                     <ChartsTabs data={chartData}/>
                 </div>
             }
-            <div className="absolute top-0 z-[-2] h-screen w-screen bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]"></div>
+            <BackgroundBeams />
         </>
     );
 }

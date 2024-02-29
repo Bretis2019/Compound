@@ -13,6 +13,8 @@ import {useEffect, useState} from "react";
 import {cn} from "@/lib/utils";
 import {CalendarIcon} from "@radix-ui/react-icons";
 import {addDays, format} from "date-fns";
+import { BackgroundGradient } from "../ui/background-gradient";
+import { WavyBackground } from "../ui/wavy-background";
 
 interface Suggestion {
   long: string,
@@ -132,138 +134,139 @@ export function LandingForm() {
   }, [query]);
 
   return (
-      <div key="1" className="w-full h-screen bg-opacity-15 max-w-lg mx-auto flex justify-center items-center">
-        <Card>
-          <CardHeader>
-            <CardTitle className={"text-2xl"}>Dollar cost average simulator</CardTitle>
-            <CardDescription>Simulate putting your savings in a stock over a period of time.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="w-full flex items-center justify-between space-x-8 space-y-2">
-              <Label htmlFor="stock">Stock</Label>
-              <Select>
-                <Popover open={stockOpen} onOpenChange={setStockOpen}>
-                  <PopoverTrigger asChild>
-                    <Button className="w-[240px] justify-between" role="combobox" variant="outline">
-                      {values.stock === "" ? "Select a stock...": values.stock}
-                      <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[240px] p-0">
-                    <Command>
-                      <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search stocks..." />
-                      <CommandEmpty>{loading ? "Loading...": "No stock found."}</CommandEmpty>
-                      <CommandGroup>
-                        {suggestions && suggestions.map(suggestion => {
-                          return (
-                              <CommandItem key={suggestion.ticker} value={suggestion.long} onSelect={() => {
-                                setValues(prevValues => ({
-                                  ...prevValues,
-                                  stock: suggestion.ticker
-                                }));
-                                setStockOpen(false)
-                              }}>
-                                {suggestion.long}
-                              </CommandItem>
-                          )
-                        })}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <SelectContent>
-                  {suggestions && suggestions.map(suggestion => {
-                    return (
-                        <SelectItem key={suggestion.ticker} value={suggestion.ticker}>
-                          {suggestion.long}
-                        </SelectItem>
-                    )
-                  })}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-full flex items-center justify-between space-x-8 space-y-2">
-              <Label htmlFor="country">Country</Label>
-              <Select>
-                <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-                  <PopoverTrigger asChild>
-                    <Button className="w-[240px] justify-between" role="combobox" variant="outline">
-                      {values.country === "" ? "Select country...": values.country}
-                      <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[240px] p-0">
-                    <Command>
-                      <CommandInput className="h-9" placeholder="Search country..." />
-                      <CommandEmpty>No country found.</CommandEmpty>
-                      <CommandGroup>
-                        {commandItems}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <SelectContent>
-                  {selectItems}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-full flex items-center justify-between space-x-8 space-y-2">
-              <Label htmlFor="goal-date">Start Date</Label>
-              <Popover open={dateOpen} onOpenChange={setDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                      variant={"outline"}
-                      className={cn(
-                          "w-[240px] justify-start text-left font-normal",
-                          !date && "text-muted-foreground"
-                      )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                    align="start"
-                    className="flex w-auto flex-col space-y-2 p-2"
-                >
-                  <Select
-                      onValueChange={(value) =>{
-                        setDate(addDays(new Date(), parseInt(value)))
-                        setDateOpen(false)
-                      }
-                      }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                      <SelectItem value="-365">Last year</SelectItem>
-                      <SelectItem value="-730">Two years</SelectItem>
-                      <SelectItem value="-1825">Last five years</SelectItem>
-                      <SelectItem value="-3650">Max</SelectItem>
+      <WavyBackground className="w-full h-screen max-w-4xl mx-auto flex justify-center items-center">
+          <BackgroundGradient>
+            <Card>
+              <CardHeader>
+                <CardTitle className={"text-2xl"}>Dollar cost average simulator</CardTitle>
+                <CardDescription>Simulate putting your savings in a stock over a period of time.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="w-full flex items-center justify-between space-x-8 space-y-2">
+                  <Label htmlFor="stock">Stock</Label>
+                  <Select>
+                    <Popover open={stockOpen} onOpenChange={setStockOpen}>
+                      <PopoverTrigger asChild>
+                        <Button className="w-[240px] justify-between" role="combobox" variant="outline">
+                          {values.stock === "" ? "Select a stock...": values.stock}
+                          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[240px] p-0">
+                        <Command>
+                          <CommandInput onChangeCapture={handleStockChnage} className="h-9" placeholder="Search stocks..." />
+                          <CommandEmpty>{loading ? "Loading...": "No stock found."}</CommandEmpty>
+                          <CommandGroup>
+                            {suggestions && suggestions.map(suggestion => {
+                              return (
+                                  <CommandItem key={suggestion.ticker} value={suggestion.long} onSelect={() => {
+                                    setValues(prevValues => ({
+                                      ...prevValues,
+                                      stock: suggestion.ticker
+                                    }));
+                                    setStockOpen(false)
+                                  }}>
+                                    {suggestion.long}
+                                  </CommandItem>
+                              )
+                            })}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <SelectContent>
+                      {suggestions && suggestions.map(suggestion => {
+                        return (
+                            <SelectItem key={suggestion.ticker} value={suggestion.ticker}>
+                              {suggestion.long}
+                            </SelectItem>
+                        )
+                      })}
                     </SelectContent>
                   </Select>
-                  <div className="rounded-md border">
-                    <Calendar mode="single" selected={date} onSelect={setDate} />
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="initial-balance">Initial Balance</Label>
-              <Input onChange={handleInitialBalanceChange} value={values.initialBalance !== 0 ? values.initialBalance : undefined} id="initial-balance" placeholder="Enter your initial balance" type="number" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="monthly-contributions">Monthly Contributions</Label>
-              <Input onChange={handleMonthlyContributionChange} value={values.monthlyContribution !== 0 ? values.monthlyContribution: undefined} id="monthly-contributions" placeholder="Enter your monthly contributions" type="number" />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={onSubmit} type={"submit"} className="ml-auto rounded-full">Submit</Button>
-          </CardFooter>
-        </Card>
-        <div className="absolute top-0 z-[-2] h-screen w-screen bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]"></div>
-      </div>
+                </div>
+                <div className="w-full flex items-center justify-between space-x-8 space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Select>
+                    <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+                      <PopoverTrigger asChild>
+                        <Button className="w-[240px] justify-between" role="combobox" variant="outline">
+                          {values.country === "" ? "Select country...": values.country}
+                          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[240px] p-0">
+                        <Command>
+                          <CommandInput className="h-9" placeholder="Search country..." />
+                          <CommandEmpty>No country found.</CommandEmpty>
+                          <CommandGroup>
+                            {commandItems}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <SelectContent>
+                      {selectItems}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="w-full flex items-center justify-between space-x-8 space-y-2">
+                  <Label htmlFor="goal-date">Start Date</Label>
+                  <Popover open={dateOpen} onOpenChange={setDateOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                          variant={"outline"}
+                          className={cn(
+                              "w-[240px] justify-start text-left font-normal",
+                              !date && "text-muted-foreground"
+                          )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                        align="start"
+                        className="flex w-auto flex-col space-y-2 p-2"
+                    >
+                      <Select
+                          onValueChange={(value) =>{
+                            setDate(addDays(new Date(), parseInt(value)))
+                            setDateOpen(false)
+                          }
+                          }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectItem value="-365">Last year</SelectItem>
+                          <SelectItem value="-1825">Last five years</SelectItem>
+                          <SelectItem value="-3650">Last ten years</SelectItem>
+                          <SelectItem value="-9125">Last 25 years</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="rounded-md border">
+                        <Calendar mode="single" selected={date} onSelect={setDate} />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="initial-balance">Initial Balance</Label>
+                  <Input onChange={handleInitialBalanceChange} value={values.initialBalance !== 0 ? values.initialBalance : undefined} id="initial-balance" placeholder="Enter your initial balance" type="number" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="monthly-contributions">Monthly Contributions</Label>
+                  <Input onChange={handleMonthlyContributionChange} value={values.monthlyContribution !== 0 ? values.monthlyContribution: undefined} id="monthly-contributions" placeholder="Enter your monthly contributions" type="number" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={onSubmit} type={"submit"} className="ml-auto rounded-full">Submit</Button>
+              </CardFooter>
+            </Card>
+          </BackgroundGradient>
+      </WavyBackground>
   )
 }
 
